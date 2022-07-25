@@ -86,7 +86,7 @@ class UserController extends Controller
         //         // 'panDocImage' => $newPanDocImageName
         //     ]);
         // }
-
+   
         // generating token
         // $token = $user->createToken($request->email)->plainTextToken;
         // response message
@@ -175,12 +175,12 @@ class UserController extends Controller
 
         $token = $user->createToken($request->email)->plainTextToken;
 
-        $response = [
-            "status" => true,
-            "user" => $user,
-            "token" => $token,
-        ];
-        return response()->json($response, 200);
+        // $response = [
+        //     // "status" => "active",
+        //     // "user" => $user,
+        //     "token" => $token,
+        // ];
+        return response()->json($token, 200);
     }
 
     /**
@@ -219,9 +219,8 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        //
+        
     }
-
     /**
      * Update the specified resource in storage.
      *
