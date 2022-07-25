@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
@@ -27,7 +28,7 @@ class CategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create(Request $request)
-    {  
+    {
             $request-> validate([
             'name'=>'required|unique',
             // 'slug'
@@ -112,9 +113,15 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $category = Category::find($id);
-        DB::table('Categories')->whereNull('parent_id')->get();
-        }
+        // $category = Category::find($id);
+        // // $category = DB::table('Categories')->whereNotNull('parent_id')->get();
+        // // $category = Category::findOrFail($id);
+        // // // return $category;
+        // // if($request->method()=='GET')
+        // // {
+        //     $categories = Category::where('parent_id', null)->where('id', '!=', $category->id)->orderby('name', 'asc')->get();
+        //     return $categories;
+        // }
     }
 
     /**
@@ -123,9 +130,18 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category)
+    public function destroy(Request $request, $id)
     {
-            
+        $category = Category::find($id);
+        return $category;
+        // if(!$category){
+        //     return response()->json(["message"=>"Category not registered."]);
+        // }
+        // $successRespose = [
+        //     "message"=>"Cataegory has been deleted."
+        // ];
+        // if ($request->parent_id == null){
+        //     return "Bibek";
+        // }
     }
 }
-    

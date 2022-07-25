@@ -70,6 +70,7 @@ Route::controller(CategoryController::class)->group( function(){
     Route::get('/category/add','create')->name('category.create');
     Route::get('/cat','index');
     Route::get('/cat/sub','subcategory');
+    Route::delete('/cat/delete/{id}','destroy');
 
     // Route::get('/cat/show','show')->name('category.store');
     Route::group(['middleware' => 'auth:sanctum'], function () {
