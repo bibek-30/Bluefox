@@ -31,6 +31,7 @@ class OrderController extends Controller
     {
         $validation->validate([     
             'user_id' => 'required',
+            'item_id'=> 'required',
             'status'=> 'required|in:pending,on-work,delivered',
             'quantity'=> 'required',
             'discount'=> 'required', 
@@ -45,6 +46,7 @@ class OrderController extends Controller
 
         $order = Order::create([
             'user_id' => $validation->user_id,
+            'item_id'=> $validation->item_id,
             'status' => $validation->status,
             'quantity' => $validation->quantity,
             'discount' => $validation->discount,
@@ -97,17 +99,9 @@ class OrderController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
-        // $request-> validate([
-
-        // ]);
-
-        // $ordr = Order::where('status', $request->status)->first();
-        // return $ordr;  
+    {  
 
         $order = Order::find($id);
-        // $stat=Order::check($request->status);
-        // return $stat;
         $order-> quantity = $request->quantity?  $request->quantity : $order-> quantity;
         $order-> discount = $request->discount?  $request->discount : $order-> discount;
         $order-> total = $request->total?  $request->total : $order-> total;

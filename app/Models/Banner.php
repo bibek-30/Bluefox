@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class OrderItem extends Model
+class Banner extends Model
 {
     use HasFactory;
+
     protected $fillable = [
-        'order_id',
-        'name',
-        'desc',
-        'price',
+        'title',
+        'cover_img',
+        'status'
     ];
 }

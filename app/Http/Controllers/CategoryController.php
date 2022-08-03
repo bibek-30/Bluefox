@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 
+use function PHPUnit\Framework\isNull;
+
 class CategoryController extends Controller
 {
     /**
@@ -30,7 +32,7 @@ class CategoryController extends Controller
     public function create(Request $request)
     {
             $request-> validate([
-            'name'=>'required|unique',
+            'name'=>'required|unique:categories',
             // 'slug'
             'parent_id'
         ]);
@@ -79,8 +81,10 @@ class CategoryController extends Controller
             'name',
         ]);
         $category = Category::find($id);
+        $check = $category->parent_id;
+    // return $check;
+    if ($check == null){
         $category->name = $request->name ? $request->name : $category->name;
-        // $category->parent_id = $request->parent_id ? $request -> parent_id : $category->parent_id;
         $category->update(); 
 
         $errResponse = [
@@ -98,9 +102,7 @@ class CategoryController extends Controller
         ];
 
         return response()->json($successResponse, 201);
-
-        // return $category;
-
+    }
 
     }
 
@@ -111,17 +113,35 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function editSubCategory(Request $request, $id)
     {
-        // $category = Category::find($id);
-        // // $category = DB::table('Categories')->whereNotNull('parent_id')->get();
-        // // $category = Category::findOrFail($id);
-        // // // return $category;
-        // // if($request->method()=='GET')
-        // // {
-        //     $categories = Category::where('parent_id', null)->where('id', '!=', $category->id)->orderby('name', 'asc')->get();
-        //     return $categories;
-        // }
+    $category = Category::find($id);
+    // return $category->parent_id;
+    $check = $category->parent_id;
+    // return $check;
+    if (isset($check)){
+        $category->name = $request->name ? $request->name : $category->name;
+        $category-> parent_id = $request-> parent_id ? $request->parent_id :$category->parent_id;
+        $category->update();
+        
+        $errResponse = [
+            "status" => false,
+            "message" => "Update error"
+        ];
+
+        if (!$category) {
+            return response()->json($errResponse, 404);
+        }
+
+        $successResponse = [
+            "status" => true,
+            "message" => "Successfully Updated"
+        ];
+
+        return response()->json($successResponse, 201);
+
+    }
+
     }
 
     /**
@@ -131,17 +151,19 @@ class CategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, $id)
+    
     {
         $category = Category::find($id);
-        return $category;
-        // if(!$category){
-        //     return response()->json(["message"=>"Category not registered."]);
-        // }
-        // $successRespose = [
-        //     "message"=>"Cataegory has been deleted."
-        // ];
-        // if ($request->parent_id == null){
-        //     return "Bibek";
-        // }
+        
+        if(!$category){   
+            return response()->json(["message"=>"Category not registered."],404);
+        }
+    
+        $category->delete();
+        $successResponse = ["message"=>"Category have been deleted."];
+        return response()->json($successResponse,200);
+
+
+
     }
 }

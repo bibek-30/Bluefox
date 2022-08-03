@@ -1,12 +1,12 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\SubCategoryCotroller;
 use App\Http\Controllers\CategoryController;
-use GuzzleHttp\Promise\Create;
+use App\Http\Controllers\SettingController;
+use App\Http\Controllers\BannerController;
+use App\Http\Controllers\BlogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +20,33 @@ use GuzzleHttp\Promise\Create;
 */
 
 
+Route::controller(UserController::class)->group(function () {
+    // Signup and Login
+    Route::post('/admin/signup', 'createAdmin');
+    Route::post('/signup', 'create');
+    Route::post('/login', 'login')->name('login');
+    // Forgot Password
+    Route::post('/password/forgot', 'sendResetLink');
+    // after clicking button in mail
+    Route::get('/password/forgot/form/{token}', 'resetForm')->name('passwordResetForm');
+    Route::post('/password/reset/{token}', 'resetPassword')->name('rPassword');
+    Route::get('/resetSuccess', 'resetSuccess')->name('resetSuccess');
+
+    Route::group(['middleware' => 'auth:sanctum'], function () {
+        Route::get('/admin/user', 'index');
+        Route::get('/admin/user/{id}', 'show');
+        Route::put('/admin/user/{id}/update', 'update');
+        Route::delete('/admin/user/{id}/delete', 'destroy');
+        Route::get('/profile', 'profile');
+        Route::put('/profile/update', 'updateProfile');
+        Route::delete('/profile/delete', 'profileDelete');
+        Route::post('/admin/deleteAllUser', 'deleteAllUser');
+        Route::post('/profile/change-password', 'changepassword');
+    });
+});
+
+Route::apiResource('/blog',BlogController::class);
+
 
 Route::controller(OrderController::class)->group(function (){
 Route::group(['middleware' => 'auth:sanctum'], function () {
@@ -32,29 +59,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 });
 });
 
-Route::controller(UserController::class)->group(function () {
-    // Signup and Login
-    Route::post('/admin/signup', 'createAdmin');
-    Route::post('/signup', 'create');
-    Route::post('/login', 'login')->name('login');
-    // Forgot Password
-    // Route::post('/password/forgot', 'sendResetLink');
-    // after clicking button in mail
-    // Route::get('/password/forgot/form/{token}', 'resetForm')->name('passwordResetForm');
-    // Route::post('/password/reset/{token}', 'resetPassword')->name('rPassword');
-    // Route::get('/resetSuccess', 'resetSuccess')->name('resetSuccess');
-
-    Route::group(['middleware' => 'auth:sanctum'], function () {
-        Route::get('/admin/user', 'index');
-        Route::get('/admin/user/{id}', 'show');
-        Route::put('/admin/user/{id}/update', 'update');
-        Route::delete('/admin/user/{id}/delete', 'destroy');
-        Route::get('/profile', 'profile');
-        Route::put('/profile/update', 'updateProfile');
-        Route::delete('/profile/delete', 'profileDelete');
-        Route::post('/profile/change-password', 'changepassword');
-    });
-});
 
 Route::controller(SettingController::class)->group(function () {
     Route::group(['middleware' => 'auth:sanctum'], function () {
@@ -68,16 +72,15 @@ Route::controller(SettingController::class)->group(function () {
 Route::controller(CategoryController::class)->group( function(){
 
     Route::get('/category/add','create')->name('category.create');
-    Route::get('/cat','index');
-    Route::get('/cat/sub','subcategory');
+    Route::get('/category/list','index');
+    Route::get('/subCategory/list','subcategory');
     Route::delete('/cat/delete/{id}','destroy');
+    Route::put('/category/{id}/update', 'editCategory');
+    Route::put('/subCategory/{id}/update', 'editSubCategory');
+
 
     // Route::get('/cat/show','show')->name('category.store');
     Route::group(['middleware' => 'auth:sanctum'], function () {
-    Route::post('/admin/category/{id}', 'editCategory');
-    Route::post('/admin/sub/{id}', 'update');
-
-    //     // Route::get('/category/add','create')->name('category.create');
     });
 });
 
@@ -87,3 +90,15 @@ Route::controller(CategoryController::class)->group( function(){
 //         Route::get('/cat/show','index');
 //     });
 // });
+
+
+// Banner Section
+Route::controller(BannerController::class)->group(function () {
+    Route::post('/admin/banner/add', 'create');
+
+    Route::group(['middleware' => 'auth:sanctum'], function () {
+        Route::get('/banner', 'index');
+        Route::put('/admin/banner/{id}/update', 'update');
+        Route::delete('/admin/banner/{id}/delete', 'destroy');
+    });
+});

@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('order_items', function (Blueprint $table) {
+        // $current = Carbon::now();
+        Schema::create('banners', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained();
-            $table->string('name');
-            $table->string('desc');
-            $table->integer('price');
+            $table->string('title')->unique();
+            $table->string('cover_img');
+            $table->enum('status', ['active', 'inactive'])->default('inactive');
+            $table->timestamps();
+            // Carbon::now()->format('Y-m-d')
         });
     }
 
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('order_items');
+        Schema::dropIfExists('banners');
     }
 };
